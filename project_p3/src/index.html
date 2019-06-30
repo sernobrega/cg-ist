@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=”utf-8”>
+        <title>Terceiro Trabalho de Computacao Grafica</title>
+        <style>
+            body {
+                margin: 0px;
+                background-color: #fff;
+                overflow: hidden;
+              }
+        </style>
+        <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/functions.js"></script>
+        <script src="js/plane.js"></script>
+        <script src="js/Spotlight.js"></script>
+        <script src="js/SpotlightStructure.js"></script>
+    </head>
+    <body>
+        <script>
+            var basicMaterials = [
+              new THREE.MeshBasicMaterial({color: 0x90e7ff, name: "bas0", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshBasicMaterial({color: 0x30cffa, name: "bas1", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshBasicMaterial({color: 0x3b585f, name: "bas2", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshBasicMaterial({color: 0x808080, name: "bas3", wireframe: false, side: THREE.FrontSide})
+            ];
+            var lambertMaterials = [
+              new THREE.MeshLambertMaterial({color: 0x90e7ff, name: "lamb0", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshLambertMaterial({color: 0x30cffa, name: "lamb1", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshLambertMaterial({color: 0x3b585f, name: "lamb2", wireframe: false, side: THREE.FrontSide}),
+              new THREE.MeshLambertMaterial({color: 0x808080, name: "lamb3", wireframe: false, side: THREE.FrontSide})
+            ];
+            var phongMaterials = [
+              new THREE.MeshPhongMaterial({color: 0x90e7ff, name: "pho0", wireframe: false, shininess: 60, specular: 0x90e7ff, side: THREE.FrontSide}),
+              new THREE.MeshPhongMaterial({color: 0x30cffa, name: "pho1", wireframe: false, shininess: 60, specular: 0x30cffa, side: THREE.FrontSide}),
+              new THREE.MeshPhongMaterial({color: 0x3b585f, name: "pho2", wireframe: false, shininess: 60, specular: 0x3b585f, side: THREE.FrontSide}),
+              new THREE.MeshPhongMaterial({color: 0x808080, name: "pho3", wireframe: false, shininess: 60, specular: 0x808080, side: THREE.FrontSide})
+            ];
+            var plane = new Plane(-30, 0, 0);
+            var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            var spotlightstruct = new SpotlightStructure();
+            var spotlight = [new Spotlight(-100, 100, -100), new Spotlight(100, 100, -100), new Spotlight(-100, 100, 100), new Spotlight(100, 100, 100)];
+            var main = new Main();
+            main.init();
+            main.animate();
+        </script>
+    </body>
+</html>
