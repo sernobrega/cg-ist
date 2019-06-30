@@ -162,12 +162,11 @@ class Main {
 		this.chair.rotatingLeft(delta);
 		this.chair.rotationRight(delta);
 		this.chair.movingForward(delta);
-  	this.chair.movingBackward(delta);
-  	this.chair.speedDecay(delta);
+	  	this.chair.movingBackward(delta);
+	  	this.chair.speedDecay(delta);
 		this.chair.updateDirection(delta);
 
-
-  	this.render();
+  		this.render();
 		requestAnimationFrame(this.animate.bind(this));
 	}
 }

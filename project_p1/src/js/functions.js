@@ -56,3 +56,9 @@ function KeyUp(e) {
         break;
     }
 }
+
+function onResize() {
+	'use strict';
+	//	This was not implemented, possibly impossible due to the use of fixed
+	// camera aspects in Main.js.
+}
