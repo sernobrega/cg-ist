@@ -26,6 +26,10 @@ class Ball extends THREE.Object3D {
     this.position.set(x, y, z);
   }
 
+  setDirection(vector) {
+    this.direction.copy(vector);
+  }
+
   createBall() {
     var material = new THREE.MeshBasicMaterial({color: this.data.ball_color, wireframe: true});
     var geometry = new THREE.SphereGeometry(this.data.radius, 20, 20);
@@ -35,8 +39,7 @@ class Ball extends THREE.Object3D {
   }
 
   increaseSpeed(delta) {
-        console.log(delta);
-        console.log("Hey");
+    this.speed += 10 * Math.random();
   }
 
   updateBallMovement(delta) {
@@ -52,21 +55,6 @@ class Ball extends THREE.Object3D {
     directionvector.copy(this.direction); //Copies the vector to allow manipulation
     var ds = directionvector.multiplyScalar(this.speed); //Multiplies the direcvtion by the speed of the chair
     this.position.add(ds.multiplyScalar(delta)); //Multiplies by the time elapsed and adds to the current position
-  }
-
-  handleCollision(other, origPos) {
-    'use strict';
-
-    if(other instanceof Ball) {
-      this.position.set(origPos.x, origPos.y, origPos.z);
-      this.direction.setX(-this.direction.x);
-      this.direction.setZ(-this.direction.z);
-
-      other.direction.setX(-other.direction.x);
-      other.direction.setZ(-other.direction.z);
-
-      
-    }
   }
 
 }

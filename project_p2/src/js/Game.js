@@ -3,12 +3,16 @@ class Game {
     'use strict';
     this.data = new Data();
     this.scene;
+    this.direction = new THREE.Vector3();
+    this.cameraDirection = new THREE.Vector3();
     this.camera;
     this.controls;
     this.renderer;
     this.cameraFollow = false;
     this.ball = [];
     this.wall;
+    this.last = 0;
+    this.now;
   }
 
   createScene() {
@@ -22,7 +26,7 @@ class Game {
     this.setTopView();
 
     this.controls = this.createControls();
-    scene.add(new THREE.AxisHelper(10));
+    //scene.add(new THREE.AxisHelper(10));
   }
 
   //
@@ -60,15 +64,14 @@ class Game {
   //
   setFollowView() {
     'use strict';
-    var cameraOffset = new THREE.Vector3(0, 40, 20);
     //var cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     var ratio = this.data.camera_ratio;
     var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
 
-    camera.position.x = cameraOffset.x;
-    camera.position.y = cameraOffset.y;
-    camera.position.z = cameraOffset.z;
+    camera.position.x = this.ball[0].position.x + 20;
+    camera.position.y = this.ball[0].position.y + 40;
+    camera.position.z = this.ball[0].position.z;
     console.log(this.ball[0].position);
     camera.lookAt(this.ball[0].position);
     this.camera = camera;
@@ -79,8 +82,16 @@ class Game {
   //updateCameraLook: method responsible for updating the camera when following a ball
   //
   updateCameraLook() {
-    if(this.cameraFollow)
+    if(this.cameraFollow) {
+
+      var cameraOffset = new THREE.Vector3(0, 40, 20);
+
+      this.camera.position.x = this.ball[0].position.x + 20;
+      this.camera.position.y = this.ball[0].position.y + 40;
+      this.camera.position.z = this.ball[0].position.z;
+
       this.camera.lookAt(this.ball[0].position);
+    }
   }
 
 
@@ -131,18 +142,18 @@ class Game {
         var positionCorrection = false;
         var x = this.randFloat(-99+this.data.radius, 99-this.data.radius);
         var z = this.randFloat(-49+this.data.radius, 49-this.data.radius);
-        console.log("X:" + x + " Z:" + z);
+        //console.log("X:" + x + " Z:" + z);
 
         var len = this.ball.length;
         for(var t = 0; t < len; t++) {
-          console.log(t);
-          console.log(this.ball[t].position);
+          //console.log(t);
+          //console.log(this.ball[t].position);
           if(x - this.ball[t].position.x != 0 && z - this.ball[t].position.z != 0) {
             if(Math.pow(x - this.ball[t].position.x, 2) + Math.pow(z - this.ball[t].position.z, 2) <= Math.pow(2*this.data.radius, 2))
               positionCorrection = true;
           }
         }
-        console.log(positionCorrection);
+      //console.log(positionCorrection);
       }while(positionCorrection);
 
       balls[i] = new Ball();
@@ -151,38 +162,120 @@ class Game {
       this.scene.add(balls[i]);
       this.ball = balls;
     }
-    
+
   }
 
-  hasCollision(object, origPos) {
-    //colisões entre bolas
-    for(var i = 0; i < this.ball.length; i++) {
-      if(this.ball[i] != object) {
-        if(object.position.x - this.ball[i].position.x != 0 && object.position.z - this.ball[i].position.z != 0)
-          if(object.position.distanceTo(this.ball[i].position) <= 2*this.data.radius) {
-            object.handleCollision(this.ball[i], origPos);
+  staticCollision() {
+    for(var ball1 in this.ball){
+      for(var ball2 in this.ball) {
+          if(this.ball[ball1] != this.ball[ball2] && this.ball[ball1].position.distanceTo(this.ball[ball2].position) < 2*this.data.radius) {
+            var theta = Math.atan2((this.ball[ball1].position.z - this.ball[ball2].position.z), (this.ball[ball1].position.x - this.ball[ball2].position.x));
+            var overlap = 2*this.data.radius - this.ball[ball1].position.distanceTo(this.ball[ball2].position);
+            this.ball[ball2].position.x -= overlap * Math.cos(theta);
+            this.ball[ball2].position.z -= overlap * Math.sin(theta);
           }
       }
     }
-
-    for(i = 0; i < 4; i++) {
-      if(this.wall[i].position.x == this.data.floor_size[0]/2 || this.wall[i].position.x == - this.data.floor_size[0]/2)
-      {
-        if(Math.abs(object.position.x - this.wall[i].position.x) <= this.data.radius + this.data.walls_depth){
-          return true;
-        }
-      }
-      else{
-        if(Math.abs(object.position.z - this.wall[i].position.z) <= this.data.radius + this.data.walls_depth)
-          return true;
-      }
-    }
-
-    return false;
   }
 
-  calculateIntersection(object) {
-    console.log()
+  hasCollision() {
+    //colisões entre bolas
+    for(var ball1 in this.ball){
+      for(var ball2 in this.ball) {
+        if(this.ball[ball1] != this.ball[ball2] && this.ball[ball1].position.distanceTo(this.ball[ball2].position) <= 2*this.data.radius) {
+          var v1 = new THREE.Vector3();
+          v1.copy(this.ball[ball1].direction);
+          v1.multiplyScalar(this.ball[ball1].speed);
+
+          var v2 = new THREE.Vector3();
+          v2.copy(this.ball[ball2].direction);
+          v2.multiplyScalar(this.ball[ball2].speed);
+
+          var m1 = this.ball[ball1].mass;
+          var m2 = this.ball[ball2].mass;
+
+          var c1 = new THREE.Vector3();
+          c1.copy(this.ball[ball1].position);
+          var c2 = new THREE.Vector3();
+          c2.copy(this.ball[ball2].position);
+
+          var norma = c1.distanceTo(c2);
+          var m = 2*m2 / (m1 + m2);
+
+          var new_v1 = new THREE.Vector3();
+          new_v1.copy(v1);
+
+          c1.sub(c2);
+          v1.sub(v2);
+          v1.multiply(c1);
+          v1.divideScalar(Math.pow(norma, 2));
+          v1.multiply(c1);
+          v1.multiplyScalar(m);
+
+          new_v1.sub(v1);
+          new_v1.normalize();
+
+          var new_v2 = new THREE.Vector3();
+          new_v2.copy(new_v1);
+          new_v2.multiplyScalar(-1);
+
+          /*c2.sub(c1);
+          v2.sub(v1_r);
+          v2.multiply(c2);
+          v2.divideScalar(Math.pow(norma, 2));
+          v2.multiply(c2);
+          v2.multiplyScalar(m);
+
+          new_v2.sub(v2);
+          new_v2.normalize();*/
+          console.log(new_v1);
+          this.ball[ball1].setDirection(new_v1);
+          this.ball[ball2].setDirection(new_v2);
+
+          var separate = (2*this.data.radius - norma) / 2;
+
+          this.ball[ball1].position.add(new_v1.multiplyScalar(separate));
+          this.ball[ball2].position.add(new_v2.multiplyScalar(separate));
+        }
+      }
+
+      var right_limit = this.data.right_position[0] - this.data.walls_depth/2;
+      var left_limit = this.data.left_position[0] + this.data.walls_depth/2;
+      var back_limit = this.data.back_position[2] + this.data.walls_depth/2;
+      var front_limit = this.data.front_position[2] - this.data.walls_depth/2;
+
+      var radius = this.data.radius;
+
+      var ball_x = this.ball[ball1].position.x;
+      var ball_z = this.ball[ball1].position.z;
+
+      //new ball direction
+      if(ball_x + radius > right_limit || ball_x - radius < left_limit){
+        this.ball[ball1].direction.setX(-this.ball[ball1].direction.x);
+      }
+
+      if(ball_z + radius > front_limit || ball_z - radius < back_limit){
+        this.ball[ball1].direction.setZ(-this.ball[ball1].direction.z);
+      }
+
+      //correcting ball position
+      if(ball_x + radius > right_limit){
+        this.ball[ball1].position.setX(right_limit - radius);
+      }
+
+      if(ball_x - radius < left_limit){
+        this.ball[ball1].position.setX(left_limit + radius);
+      }
+
+      if(ball_z + radius > front_limit){
+        this.ball[ball1].position.setZ(front_limit - radius);
+      }
+
+      if(ball_z - radius < back_limit){
+        this.ball[ball1].position.setZ(back_limit + radius);
+      }
+    }
+    return false;
   }
 
   //
@@ -207,13 +300,16 @@ class Game {
 
     this.render();
     this.animate();
+
     window.addEventListener("keydown", KeyDown);
+    window.addEventListener("resize", Resize);
   }
 
   //
   //animate: function responsible for updating the display constantly
   //
-  animate() {
+
+  animate(now) {
     'use strict';
     // var elapsed = this.clock.getElapsedTime();
 
@@ -222,11 +318,21 @@ class Game {
     //   this.clock.getDelta();
     // }
 
+    if(!this.last || now - this.last >= 3*1000) {
+      this.last = now;
+      for(var i = 0; i < this.data.n_balls; i++) {
+        this.ball[i].increaseSpeed();
+      }
+    }
+
     var delta = this.clock.getDelta();
+
     for(var i = 0; i < this.data.n_balls; i++) {
       this.ball[i].updateBallMovement(delta);
-      this.hasCollision(this.ball[i], this.ball[i].position);
     }
+
+    this.hasCollision();
+    this.staticCollision();
 
     this.updateCameraLook();
 
