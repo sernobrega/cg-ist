@@ -143,19 +143,15 @@ class Game {
         var positionCorrection = false;
         var x = this.randFloat(-99+this.data.radius, 99-this.data.radius);
         var z = this.randFloat(-49+this.data.radius, 49-this.data.radius);
-        //console.log("X:" + x + " Z:" + z);
 
         var len = this.ball.length;
         for(var t = 0; t < len; t++) {
-          //console.log(t);
-          //console.log(this.ball[t].position);
           if(x - this.ball[t].position.x != 0 && z - this.ball[t].position.z != 0) {
             if(Math.pow(x - this.ball[t].position.x, 2) + Math.pow(z - this.ball[t].position.z, 2) <= Math.pow(2*this.data.radius, 2))
               positionCorrection = true;
           }
         }
-      //console.log(positionCorrection);
-      }while(positionCorrection);
+      } while(positionCorrection);
 
       balls[i] = new Ball();
       balls[i].setPosition(x, this.data.ball_position[1], z);
@@ -182,7 +178,6 @@ class Game {
 
   hasCollision() {
     'use strict';
-    //colisões entre bolas
     for(var ball1 in this.ball){
       for(var ball2 in this.ball) {
         if(this.ball[ball1] != this.ball[ball2] && this.ball[ball1].position.distanceTo(this.ball[ball2].position) <= 2*this.data.radius) {
@@ -222,16 +217,6 @@ class Game {
           new_v2.copy(new_v1);
           new_v2.multiplyScalar(-1);
 
-          /*c2.sub(c1);
-          v2.sub(v1_r);
-          v2.multiply(c2);
-          v2.divideScalar(Math.pow(norma, 2));
-          v2.multiply(c2);
-          v2.multiplyScalar(m);
-
-          new_v2.sub(v2);
-          new_v2.normalize();*/
-          console.log(new_v1);
           this.ball[ball1].setDirection(new_v1);
           this.ball[ball2].setDirection(new_v2);
 
