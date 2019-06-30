@@ -10,4 +10,4 @@
 ## Project and commands
 The purpose of this first project was to get acquainted with Three.js by creating a scene with a table, lamp and moving chair with 3 fixed cameras (top, lateral, front).
 
-You can switch between the 3 cameras by pressing `1`, `2` and `3`. You can move the chair around using the `arrow keys`.
+You can switch between the 3 cameras by pressing `1`, `2` and `3`. You can move the chair around using the `arrow keys`. `A` fills the mesh.
