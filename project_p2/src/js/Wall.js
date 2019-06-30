@@ -8,6 +8,7 @@ class Wall extends THREE.Object3D {
  	}
 
  	createWall(a) {
+ 		'use strict';
  		var geometry = new THREE.CubeGeometry(this.data.long_walls_width / a, this.data.walls_height, this.data.walls_depth);
  		var material = new THREE.MeshBasicMaterial({ color: this.data.walls_color, wireframe: true });
  		var wall = new THREE.Mesh(geometry, material);

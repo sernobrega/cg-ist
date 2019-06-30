@@ -27,10 +27,12 @@ class Ball extends THREE.Object3D {
   }
 
   setDirection(vector) {
+    'use strict';
     this.direction.copy(vector);
   }
 
   createBall() {
+    'use strict';
     var material = new THREE.MeshBasicMaterial({color: this.data.ball_color, wireframe: true});
     var geometry = new THREE.SphereGeometry(this.data.radius, 20, 20);
     var ball = new THREE.Mesh(geometry, material);
@@ -39,6 +41,7 @@ class Ball extends THREE.Object3D {
   }
 
   increaseSpeed(delta) {
+    'use strict';
     this.speed += 10 * Math.random();
   }
 

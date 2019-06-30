@@ -82,6 +82,7 @@ class Game {
   //updateCameraLook: method responsible for updating the camera when following a ball
   //
   updateCameraLook() {
+    'use strict';
     if(this.cameraFollow) {
 
       var cameraOffset = new THREE.Vector3(0, 40, 20);
@@ -103,6 +104,7 @@ class Game {
   }
 
   createControls() {
+    'use strict';
     var controls = new THREE.OrbitControls(this.camera);
     return controls;
   }
@@ -129,10 +131,9 @@ class Game {
   }
 
   randFloat(low, high) {
-
+    'use strict';
     return low + Math.random() * ( high - low );
-
-}
+  }
 
   createBalls() {
     'use strict';
@@ -166,6 +167,7 @@ class Game {
   }
 
   staticCollision() {
+    'use strict';
     for(var ball1 in this.ball){
       for(var ball2 in this.ball) {
           if(this.ball[ball1] != this.ball[ball2] && this.ball[ball1].position.distanceTo(this.ball[ball2].position) < 2*this.data.radius) {
@@ -179,6 +181,7 @@ class Game {
   }
 
   hasCollision() {
+    'use strict';
     //colisões entre bolas
     for(var ball1 in this.ball){
       for(var ball2 in this.ball) {
