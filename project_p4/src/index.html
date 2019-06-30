@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=”utf-8”>
+        <title>Terceiro Trabalho de Computacao Grafica</title>
+        <style>
+            body {
+                margin: 0px;
+                background-color: #fff;
+                overflow: hidden;
+              }
+        </style>
+        <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script src="js/Main.js"></script>
+        <script src="js/functions.js"></script>
+        <script src="js/Cube.js"></script>
+        <script src="js/Table.js"></script>
+        <script src="js/Ball.js"></script>
+    </head>
+    <body>
+        <script>
+
+            var manager = new THREE.LoadingManager();
+            var loader = new THREE.TextureLoader(manager);
+            loader.setPath('textures/');
+
+            var cubeTextures = [
+              loader.load('face_branca.png'),
+              loader.load('face_amarela.png'),
+              loader.load('face_verde.png'),
+              loader.load('face_azul.png'),
+              loader.load('face_laranja.png'),
+              loader.load('face_vermelha.png')
+            ];
+            var cubeBump = loader.load('bump.png');
+            var tableTexture = loader.load('chess.jpg');
+            var ballTexture = loader.load('billiard.jpeg');
+            var pauseTexture = loader.load('pause.png');
+
+            //global variables
+            var materialsBasic, materialsComplex;
+            var directionalLight, pointLight;
+            var table, cube, ball, main;
+
+            manager.onLoad = gameStart(); //makes sure all textures are loaded first
+
+
+            function gameStart() {
+              //Basic materials array
+              materialsBasic = [
+                new THREE.MeshBasicMaterial( {name: "tableBasic", map: tableTexture, side: THREE.FrontSide }),
+                new THREE.MeshBasicMaterial( {name: "ballBasic", map: ballTexture, side: THREE.FrontSide }),
+                [] //cube materials
+              ];
+
+              //Materials with calculation array
+              materialsComplex = [
+                new THREE.MeshLambertMaterial( {name: "tableComplex", map: tableTexture, side: THREE.FrontSide}),
+                new THREE.MeshPhongMaterial( {name: "ballComplex", map: ballTexture, side: THREE.FrontSide}),
+                [] //cube materials
+              ];
+
+              //cube materials
+              for (var i = 0; i < 6; i++) {
+                materialsBasic[2].push(new THREE.MeshBasicMaterial({name: "cubeBasic", map: cubeTextures[i], side: THREE.FrontSide }));
+                materialsComplex[2].push(new THREE.MeshPhongMaterial({name: "cubeBasic", map: cubeTextures[i], bumpMap: cubeBump, side: THREE.FrontSide }));
+              }
+
+              //Main
+              main = new Main();
+            }
+        </script>
+    </body>
+</html>
